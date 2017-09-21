@@ -2,8 +2,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as Actions from '../../actions/counter';
-import * as Stores from '../../stores/counter';
+import Action from '../../actions';
+import Store from '../../stores';
+import Dispatcher from '../../dispatchers';
+
+const dispatcher = new Dispatcher();
+const action     = new Action(dispatcher);
+const store      = new Store(dispatcher);
 
 export default class Counter extends React.Component {
     static CLASS_NAME = 'Counter';
@@ -15,15 +20,24 @@ export default class Counter extends React.Component {
     constructor(props) {
         super(props);
 
-        const count = (props.match && props.match.params) ? parseInt(props.match.params.count) : 0;
+        this.state = { count : store.getCount() };
 
-        this.state = {
-            count : isNaN(count) ? 0 : count
-        };
+        store.on('CHANGE', () => {
+            this.onChange();
+        });
+        // const count = (props.match && props.match.params) ? parseInt(props.match.params.count) : 0;
+
+        // this.state = {
+        //     count : isNaN(count) ? 0 : count
+        // };
+    }
+
+    onChange() {
+        this.setState({ count : store.getCount() });
     }
 
     onClickUpButton() {
-        // TODO
+        action.countUp(this.state.count + 1);
     }
 
     onClickDownButton() {
