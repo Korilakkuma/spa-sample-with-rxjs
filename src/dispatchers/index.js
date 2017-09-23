@@ -1,8 +1,7 @@
 'use strict';
 
 export default class Dispatcher {
-    constructor(props) {
-        super(props);
+    constructor() {
         this.handlers = {};
     }
 
