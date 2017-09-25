@@ -8,4 +8,8 @@ export default class Action {
     countUp(data) {
         this.dispatcher.emit('COUNT_UP', data);
     }
+
+    countDown(data) {
+        this.dispatcher.emit('COUNT_DOWN', data);
+    }
 }
