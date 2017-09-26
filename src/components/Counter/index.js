@@ -41,7 +41,7 @@ export default class Counter extends React.Component {
     }
 
     onClickDownButton() {
-        // TODO
+        action.countDown(this.state.count - 1);
     }
 
     render() {
