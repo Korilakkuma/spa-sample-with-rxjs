@@ -2,13 +2,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import Rx from 'rxjs';
 import Action from '../../actions';
 import Store from '../../stores';
-import Dispatcher from '../../dispatchers';
 
-const dispatcher = new Dispatcher();
-const action     = new Action(dispatcher);
-const store      = new Store(dispatcher);
 
 export default class Counter extends React.Component {
     static CLASS_NAME = 'Counter';
@@ -20,28 +17,35 @@ export default class Counter extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { count : store.getCount() };
+        this.subject = new Rx.Subject();
+        this.action = new Action(this.subject);
+        this.store  = new Store(this.subject);
 
-        store.on('CHANGE', () => {
-            this.onChange();
-        });
-        // const count = (props.match && props.match.params) ? parseInt(props.match.params.count) : 0;
+        const count = (props.match && props.match.params) ? parseInt(props.match.params.count) : 0;
 
-        // this.state = {
-        //     count : isNaN(count) ? 0 : count
-        // };
+        if (isNaN(count)) {
+            this.state = { count : this.store.getCount() };
+        } else {
+            this.state = { count };
+        }
+
+        this.store.subscribe(this.onChange.bind(this));
     }
 
     onChange() {
-        this.setState({ count : store.getCount() });
+        this.setState({ count : this.store.getCount() });
     }
 
     onClickUpButton() {
-        action.countUp(this.state.count + 1);
+        this.action.count(this.state.count + 1);
     }
 
     onClickDownButton() {
-        action.countDown(this.state.count - 1);
+        this.action.count(this.state.count - 1);
+    }
+
+    componentWillUnmount() {
+        this.store.unsubscribe();
     }
 
     render() {

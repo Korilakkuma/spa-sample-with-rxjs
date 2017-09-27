@@ -1,15 +1,11 @@
 'use strict';
 
 export default class Action {
-    constructor(dispatcher) {
-        this.dispatcher = dispatcher;
+    constructor(subject) {
+        this.subject = subject;
     }
 
-    countUp(data) {
-        this.dispatcher.emit('COUNT_UP', data);
-    }
-
-    countDown(data) {
-        this.dispatcher.emit('COUNT_DOWN', data);
+    count(data) {
+        this.subject.next(data);
     }
 }

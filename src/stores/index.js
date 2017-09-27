@@ -1,24 +1,20 @@
 'use strict';
 
-import Dispatcher from '../dispatchers';
-
-export default class Store extends Dispatcher {
-    constructor(dispatcher) {
-        super();
-        this.count = 0;
-
-        dispatcher.on('COUNT_UP',   this.onCountUp.bind(this));
-        dispatcher.on('COUNT_DOWN', this.onCountDown.bind(this));
+export default class Store {
+    constructor(subject) {
+        this.subject = subject;
+        this.count   = 0;
     }
 
-    onCountUp(count) {
-        this.count = count;
-        this.emit('CHANGE');
+    subscribe(callback) {
+        this.subject.subscribe(count => {
+            this.count = count;
+            callback();
+        });
     }
 
-    onCountDown(count) {
-        this.count = count;
-        this.emit('CHANGE');
+    unsubscribe() {
+        this.subject.unsubscribe();
     }
 
     getCount() {
