@@ -14,15 +14,23 @@ app.use(logger('dev'));
 
 app.use(express.static('public'));
 
-app.get('/', render);
-app.get('/counter', render);
-app.get('/counter/:count', render);
+app.get('/', (req, res) => {
+    render(req, res, '', 'Home Page');
+});
+
+app.get('/counter', (req, res) => {
+    render(req, res, 'COUNTER from 0 | ', 'Count Page');
+});
+
+app.get('/counter/:count', (req, res) => {
+    render(req, res, `COUNTER from ${req.params.count} | `, `Count Page from ${req.params.count}`);
+});
 
 app.listen(port, () => {
     console.log(`Listening on port ${port} ...`);
 });
 
-function render(req, res) {
+function render(req, res, title, description) {
     const context = {};
     const content = ReactDOMServer.renderToString(
         <StaticRouter location={req.url} context={context}>
@@ -34,7 +42,8 @@ function render(req, res) {
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>SPA with RxJS</title>
+    <title>${title}SPA with RxJS</title>
+    <meta name="description" content="${description}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes" />
     <meta name="format-detection" content="telephone=no" />
     <link rel="stylesheet" href="/app.css" type="text/css" media="all" />
